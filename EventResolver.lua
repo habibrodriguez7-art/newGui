@@ -17,6 +17,7 @@ local KNOWN_REMOTE_EVENTS = {
     "RollEnchant",
     "ClaimPirateChest",
     "ObtainedNewFishNotification",
+    "PurchaseTotem",
 }
 
 local KNOWN_REMOTE_FUNCTIONS = {
