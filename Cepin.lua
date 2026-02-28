@@ -1,8 +1,3 @@
--- ============================================
--- LYNX GUI LIBRARY v3.0 - IMPROVED
--- Pure UI Library - Returns Library Object
--- ============================================
-
 local Library = {}
 Library.flags = {}
 Library.pages = {}
@@ -17,9 +12,6 @@ Library._navContainer = nil
 Library._connections = {}
 Library._spawns = {}
 
--- ============================================
--- SERVICES (Cached once)
--- ============================================
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
@@ -30,11 +22,8 @@ local HttpService = game:GetService("HttpService")
 local localPlayer = Players.LocalPlayer
 local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 
--- ============================================
--- COLOR PALETTE (CONSISTENT & IMPROVED)
--- ============================================
 local colors = {
-    primary = Color3.fromRGB(255, 140, 0),
+    primary = Color3.fromRGB(135, 206, 235),
     secondary = Color3.fromRGB(147, 112, 219),
     accent = Color3.fromRGB(186, 85, 211),
     success = Color3.fromRGB(34, 197, 94),
@@ -48,13 +37,11 @@ local colors = {
     border = Color3.fromRGB(55, 55, 55),
 }
 
--- Window Config (More compact)
 local windowSize = UDim2.new(0, 420, 0, 280)
 local minWindowSize = Vector2.new(380, 250)
 local maxWindowSize = Vector2.new(800, 600)
 local sidebarWidth = 120
 
--- Font Sizes (Consistent & Larger)
 local fontSize = {
     title = 16,
     subtitle = 12,
@@ -63,9 +50,6 @@ local fontSize = {
     small = 10,
 }
 
--- ============================================
--- INSTANCE CREATOR UTILITY
--- ============================================
 local function new(class, props)
     local inst = Instance.new(class)
     if props then
@@ -76,9 +60,6 @@ local function new(class, props)
     return inst
 end
 
--- ============================================
--- CONNECTION MANAGER
--- ============================================
 function Library:AddConnection(name, connection)
     if self._connections[name] then
         pcall(function() self._connections[name]:Disconnect() end)
@@ -106,9 +87,6 @@ function Library:Cleanup()
     table.clear(self._spawns)
 end
 
--- ============================================
--- CONFIG SYSTEM
--- ============================================
 local CONFIG_FOLDER = "LynxGUI_Configs"
 local CONFIG_FILE = CONFIG_FOLDER .. "/lynx_config.json"
 local CurrentConfig = {}
@@ -225,9 +203,6 @@ local function ExecuteConfigCallbacks()
     end
 end
 
--- ============================================
--- GLOBAL BRIDGE (For Module compatibility)
--- ============================================
 _G.AutoSaveEnabled = true
 
 function _G.GetConfigValue(key, default)
@@ -245,9 +220,6 @@ function _G.GetFullConfig()
     return CurrentConfig
 end
 
--- ============================================
--- CREATE WINDOW
--- ============================================
 function Library:CreateWindow(config)
     config = config or {}
     local name = config.Name or "LynxGUI"
@@ -620,9 +592,6 @@ function Library:CreateWindow(config)
     return self
 end
 
--- ============================================
--- CREATE PAGE
--- ============================================
 function Library:CreatePage(name, title, imageId, order)
     local page = new("Frame", {
         Parent = self._contentBg,
@@ -712,16 +681,10 @@ function Library:CreatePage(name, title, imageId, order)
     return contentContainer
 end
 
--- ============================================
--- SET FIRST PAGE
--- ============================================
 function Library:SetFirstPage(name, title)
     self:_switchPage(name)
 end
 
--- ============================================
--- PAGE SWITCHING
--- ============================================
 function Library:_switchPage(pageName)
     if self._currentPage == pageName then return end
     
@@ -753,9 +716,6 @@ function Library:_switchPage(pageName)
     self._currentPage = pageName
 end
 
--- ============================================
--- CREATE CATEGORY
--- ============================================
 function Library:CreateCategory(parent, title)
     local categoryFrame = new("Frame", {
         Parent = parent,
@@ -825,9 +785,6 @@ function Library:CreateCategory(parent, title)
     return contentContainer
 end
 
--- ============================================
--- CREATE TOGGLE (Compact)
--- ============================================
 function Library:CreateToggle(parent, label, configPath, callback, disableSave, defaultValue)
     local frame = new("Frame", {Parent = parent, Size = UDim2.new(1, 0, 0, 28), BackgroundTransparency = 1, ZIndex = 7})
     
@@ -895,9 +852,6 @@ function Library:CreateToggle(parent, label, configPath, callback, disableSave, 
     return frame
 end
 
--- ============================================
--- DROPDOWN SYSTEM (Overlay Panel like ContohLib)
--- ============================================
 Library._dropdownOverlay = nil
 Library._dropdownPanel = nil
 Library._dropdownFolder = nil
@@ -1012,9 +966,6 @@ function Library:_hideDropdown()
     end
 end
 
--- ============================================
--- CREATE DROPDOWN (Overlay Panel Style like ContohLib)
--- ============================================
 function Library:CreateDropdown(parent, title, imageId, items, configPath, onSelect, uniqueId, defaultValue)
     self:_initDropdownSystem()
     
@@ -1307,9 +1258,6 @@ function Library:CreateDropdown(parent, title, imageId, items, configPath, onSel
     return dropdownFrame
 end
 
--- ============================================
--- CREATE MULTI DROPDOWN (Overlay Panel Style like ContohLib)
--- ============================================
 function Library:CreateMultiDropdown(parent, title, imageId, items, configPath, onSelect, uniqueId, defaultValues)
     self:_initDropdownSystem()
     
@@ -1611,9 +1559,6 @@ function Library:CreateMultiDropdown(parent, title, imageId, items, configPath, 
     return dropdownFrame
 end
 
--- ============================================
--- CREATE INPUT
--- ============================================
 function Library:CreateInput(parent, label, configPath, defaultValue, callback)
     local frame = new("Frame", {Parent = parent, Size = UDim2.new(1, 0, 0, 28), BackgroundTransparency = 1, ZIndex = 7})
     
@@ -1677,9 +1622,6 @@ function Library:CreateInput(parent, label, configPath, defaultValue, callback)
     return frame
 end
 
--- ============================================
--- CREATE BUTTON
--- ============================================
 function Library:CreateButton(parent, label, callback)
     local btnFrame = new("Frame", {
         Parent = parent,
@@ -1729,9 +1671,6 @@ function Library:CreateButton(parent, label, callback)
     return btnFrame
 end
 
--- ============================================
--- CREATE TEXTBOX
--- ============================================
 function Library:CreateTextBox(parent, label, placeholder, configPath, defaultValue, callback)
     local container = new("Frame", {
         Parent = parent,
@@ -1796,9 +1735,6 @@ function Library:CreateTextBox(parent, label, placeholder, configPath, defaultVa
     return {Container = container, TextBox = textBox, SetValue = function(v) textBox.Text = tostring(v) lastValue = tostring(v) end}
 end
 
--- ============================================
--- INITIALIZE
--- ============================================
 function Library:Initialize()
     ExecuteConfigCallbacks()
     
@@ -1816,9 +1752,6 @@ function Library:LoadConfig(data)
     Library.ConfigSystem.Save()
 end
 
--- ============================================
--- NOTIFICATION SYSTEM
--- ============================================
 function Library:MakeNotify(config)
     config = config or {}
     local title = config.Title or "Notification"
@@ -1897,9 +1830,6 @@ function Library:MakeNotify(config)
     end)
 end
 
--- ============================================
--- LYNX API COMPATIBILITY
--- ============================================
 function Library:Window(config)
     config = config or {}
     
