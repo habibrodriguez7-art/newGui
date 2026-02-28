@@ -1,5 +1,5 @@
 -- ============================================
--- LYNX GUI LIBRARY v3.0 - IMPROVED
+-- LYNX GUI LIBRARY v3.0 - IMPROVEDrrr
 -- Pure UI Library - Returns Library Object
 -- ============================================
 
@@ -34,7 +34,7 @@ local isMobile = UserInputService.TouchEnabled and not UserInputService.Keyboard
 -- COLOR PALETTE (CONSISTENT & IMPROVED)
 -- ============================================
 local colors = {
-    primary = Color3.fromRGB(0, 200, 180),
+    primary = Color3.fromRGB(0, 178, 160),
     secondary = Color3.fromRGB(147, 112, 219),
     accent = Color3.fromRGB(186, 85, 211),
     success = Color3.fromRGB(34, 197, 94),
