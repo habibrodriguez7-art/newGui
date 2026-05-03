@@ -209,8 +209,8 @@ end
 local function ExecuteConfigCallbacks()
     for _, entry in ipairs(CallbackRegistry) do
         local value = Library.ConfigSystem.Get(entry.path, entry.default)
-        if entry.updateVisual then entry.updateVisual(value) end
-        if entry.callback then entry.callback(value) end
+        if entry.updateVisual then pcall(entry.updateVisual, value) end
+        if entry.callback then pcall(entry.callback, value) end
     end
 end
 _G.AutoSaveEnabled = true
@@ -1637,6 +1637,12 @@ end
 function Library:Initialize()
     if self._initialized then return end
     self._initialized = true
+    if self._pendingWindowObj then
+        pcall(function()
+            self:_createConfigTab(self._pendingWindowObj)
+        end)
+        self._pendingWindowObj = nil
+    end
     ExecuteConfigCallbacks()
 
     self:AddConnection("playerRemoving", Players.PlayerRemoving:Connect(function(plr)
@@ -1839,11 +1845,20 @@ function Library:Window(config)
     WindowObject._tabs = {}
     WindowObject._tabOrder = 0
     Library._initialized = false
-    task.delay(0.5, function()
-        if not Library._initialized then
-            Library:Initialize()
+    Library._pendingWindowObj = WindowObject
+    local initFrames = 0
+    Library:AddConnection("autoInit", RunService.Heartbeat:Connect(function()
+        initFrames = initFrames + 1
+        if initFrames >= 30 then
+            if Library._connections["autoInit"] then
+                Library._connections["autoInit"]:Disconnect()
+                Library._connections["autoInit"] = nil
+            end
+            if not Library._initialized then
+                Library:Initialize()
+            end
         end
-    end)
+    end))
     function WindowObject:AddTab(tabConfig)
         tabConfig = tabConfig or {}
         local tabName = tabConfig.Name or "Tab"
@@ -2118,9 +2133,6 @@ function Library:Window(config)
         table.insert(self._tabs, TabObject)
         return TabObject
     end
-    task.defer(function()
-        Library:_createConfigTab(WindowObject)
-    end)
     return WindowObject
 end
 return Library
